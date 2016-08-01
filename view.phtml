@@ -28,7 +28,7 @@
                 }
                 ?>
             </td>
-            <td class="<?= $book['SJ'] ? "success" : ""; ?>">
+            <td class="<?= $book['SJ'] ? "success" : ""; ?>" width="80">
                 <a href="http://mill1.sjlibrary.org/search/i<?= $book['SJ'] ? $book['SJ'] : $book['ISBN'] ?>">SJ</a>
                 <a href="http://mill1.sjlibrary.org/search~S1/?searchtype=t&searcharg=<?= rawurlencode($book['title']) ?>&searchscope=1&sortdropdown=-&SORT=D&extended=0&SUBMIT=Search&searchlimits=&searchorigarg=t<?= rawurlencode($book['title']) ?>">
                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span></a>
