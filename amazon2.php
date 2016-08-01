@@ -1,6 +1,6 @@
 <?php
-require_once 'Zend/Loader/Autoloader.php';
-Zend_Loader_Autoloader::getInstance();
+require_once 'vendor/autoload.php';
+
 date_default_timezone_set('UTC');
 $clean = null;
 if (PHP_SAPI == 'cli') {
@@ -85,7 +85,7 @@ class AmazonCall
 
     function get_SJ($isbn)
     {
-        $this->log("Checking $ISBN");
+        $this->log("Checking $isbn");
         $url = "http://mill1.sjlibrary.org/search/i$isbn";
         $data = file_get_contents($url);
         return strstr($data, "No matches found") == false;

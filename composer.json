@@ -1,0 +1,16 @@
+{
+    "name": "smalyshev/amazon",
+    "description": "Amazon wishlist viewer",
+    "type": "project",
+    "license": "WTFPL",
+    "authors": [
+        {
+            "name": "Stanislav Malyshev",
+            "email": "smalyshev@gmail.com"
+        }
+    ],
+    "require": {
+	 "zf1/zend-view": "~1.12",
+	 "zf1/zend-cache": "~1.12"
+	}
+}
