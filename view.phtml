@@ -1,0 +1,34 @@
+<html>
+<head><title>My Books</title></head>
+<body>
+<a href="<?= $_SERVER['PHP_SELF'] ?>?reload=Amazon">Reload Amazon</a><br>
+<?= count($this->books) ?> entries:<br>
+<pre><?php //var_dump($this->books); ?></pre>
+<table>
+    <?php foreach ($this->books as $book) { ?>
+        <?php $sjw = $book['SJ'] ? "bold" : "normal";
+        $scw = $book['SC'] ? "bold" : "normal"; ?>
+        <tr>
+            <td><?= $book['author'] ?></td>
+            <td><a href="<?= $book['amazon'] ?>"><?= $book['title'] ?></a></td>
+            <td>
+                <?php
+                if (count($book['isbns']) < 2) {
+                    echo $book['ISBN'];
+                } else {
+                        echo $this->formSelect("b" . $book['ISBN'], 0, array(), $book['isbns']);
+                }
+                ?>
+            </td>
+            <td width="80">
+                <a href="http://mill1.sjlibrary.org/search/i<?= $book['SJ'] ? $book['SJ'] : $book['ISBN'] ?>"
+                   style="font-weight: <?= $sjw ?>">San Jose</a>
+            </td>
+            <!-- td width="80">
+<a href="http://146.74.92.18/ipac20/ipac.jsp?index=ISBNEX&term=<?= $book['SC'] ? $book['SC'] : $book['ISBN'] ?>"  style="font-weight: <?= $scw ?>">Cupertino</a>
+</td -->
+        </tr>
+    <?php } ?>
+</table>
+</body>
+</html>
