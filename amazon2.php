@@ -73,7 +73,7 @@ class AmazonCall
         $url = "http://www.librarything.com/api/thingISBN/$main_isbn";
         $this->log("Checking main $main_isbn");
         $xml = simplexml_load_file($url);
-        $isbns = [];
+        $isbns = [$main_isbn];
         foreach ($xml->isbn as $isbn) {
             $lang = file_get_contents("http://www.librarything.com/api/thingLang.php?isbn=$isbn");
             if ($lang == "eng") {
@@ -83,7 +83,7 @@ class AmazonCall
         return array_unique($isbns);
     }
 
-    function get_SJ($isbn)
+    public function get_SJ($isbn)
     {
         $this->log("Checking $isbn");
         $url = "http://mill1.sjlibrary.org/search/i$isbn";
@@ -91,7 +91,7 @@ class AmazonCall
         return strstr($data, "No matches found") == false;
     }
 
-    function get_lib_all($func, $isbns)
+    public function get_lib_all($func, $isbns)
     {
         foreach ($isbns as $isbn) {
             $res = $this->cache->$func($isbn);
@@ -102,6 +102,10 @@ class AmazonCall
         return false;
     }
 
+    public function goodreads($isbn) {
+        return @file_get_contents("https://www.goodreads.com/book/isbn_to_id?key=JH2quOhlm1utLWAvsh9fA&isbn=$isbn");
+    }
+
 }
 
 $myamazon = new AmazonCall();
@@ -110,6 +114,9 @@ $fe_opt = array('cached_entity' => $myamazon, "lifetime" => 8640000); // lifetim
 $be_opt = array('cache_dir' => dirname(__FILE__) . "/cache/", 'file_locking' => false, "hashed_directory_level" => 1);
 $cache = Zend_Cache::factory('Class', 'File', $fe_opt, $be_opt);
 
+/**
+ * @var AmazonCall $cache
+ */
 $myamazon->cache = $cache;
 
 //$cache->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array('ISBN'));
@@ -124,19 +131,26 @@ $cache->setTagsArray(array('Amazon', 'AmazonList'));
 $list = $cache->wishlist(LISTID);
 
 foreach ($list as &$item) {
-    $cache->setTagsArray(array('ISBN'));
     if (isset($item['ISBN'])) {
+        $cache->setTagsArray(array('ISBN', $item['ISBN']));
         $item['isbns'] = $cache->allISBN($item['ISBN']);
     } else {
         $item['isbns'] = [];
     }
-    $cache->setTagsArray(array('Library'));
     $item["SC"] = null;
     if (!empty($item['isbns'])) {
+        $cache->setTagsArray(array('Library', $item['ISBN']));
         $item["SJ"] = $cache->get_lib_all("get_SJ", $item['isbns']);
     } else {
         $item["SJ"] = null;
     }
+    if (!empty($item['ISBN'])) {
+        $cache->setTagsArray(array('Goodreads', $item['ISBN']));
+        $item["GR"] = $cache->goodreads($item['ISBN']);
+    } else {
+        $item["GR"] = null;
+    }
+
 }
 function book_cmp($a, $b)
 {
