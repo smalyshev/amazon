@@ -171,4 +171,5 @@ usort($list, "book_cmp");
 $v = new Zend_View();
 $v->setScriptPath(dirname(__FILE__));
 $v->books = $list;
+$v->list = LISTID;
 echo $v->render('view.phtml');
