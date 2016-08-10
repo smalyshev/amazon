@@ -21,13 +21,23 @@ class AmazonCall
         }
     }
 
+    private function loadURL($url) {
+        $ch = curl_init($url);
+        $curlOptions[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_0;
+        $curlOptions[CURLOPT_RETURNTRANSFER] = true;
+        $curlOptions[CURLOPT_SSL_VERIFYPEER] = false;
+        curl_setopt_array($ch, $curlOptions);
+        return curl_exec($ch);
+    }
+
     public function wishlist($listID, $startpage = 1)
     {
         $size = 100;
         $ret = array();
         $wishlistdom = new DOMDocument();
         // ignore parsing warnings
-        @$wishlistdom->loadHTMLFile("http://www.amazon.com/gp/registry/wishlist/$listID?disableNav=1&page=$startpage");
+        $data = $this->loadURL("https://www.amazon.com/gp/registry/wishlist/$listID?disableNav=1&page=$startpage");
+        @$wishlistdom->loadHTML($data);
         $this->log("Loaded page $startpage");
         $wishlistxpath = new DOMXPath ($wishlistdom);
         // I want to be able to limit and rearrange the list, so I turn it into an array
